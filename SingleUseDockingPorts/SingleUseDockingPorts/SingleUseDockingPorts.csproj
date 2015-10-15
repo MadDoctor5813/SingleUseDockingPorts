@@ -58,6 +58,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy "$(TargetPath)" "C:\Users\Kevin\Games\KSP 1.0\GameData\SingleUseDockingPorts\SingleUseDockingPorts.dll" 
+"C:\Users\Kevin\Games\KSP 1.0\KSP.exe"
 </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
