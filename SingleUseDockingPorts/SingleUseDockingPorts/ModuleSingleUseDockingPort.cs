@@ -8,12 +8,40 @@ namespace SingleUseDockingPorts
 {
     public class ModuleSingleUseDockingPort : ModuleDockingNode
     {
+        Part ghostConnectionFrom = null;
+        Part ghostConnectionTo = null;
 
         public override void OnAwake()
         {
+            base.OnAwake();
             print("Initializing ModuleSingleUseDockingPort");
             //initialize event handler
             GameEvents.onPartCouple.Add(onPartCoupled);
+        }
+
+        public override void OnStart(StartState st)
+        {
+            base.OnStart(st);
+            foreach (Part child in part.children)
+            {
+                if (child.Modules.Contains(this.ClassID))
+                {
+                    ghostConnectionFrom = part.parent;
+                    ghostConnectionTo = child.children[0];
+                }
+            }
+        }
+
+        public override void OnFixedUpdate()
+        {
+            base.OnFixedUpdate();
+            if (ghostConnectionFrom != null && ghostConnectionTo != null)
+            {
+                FixedJoint joint = ghostConnectionFrom.gameObject.AddComponent<FixedJoint>();
+                joint.connectedBody = ghostConnectionTo.gameObject.rigidbody;
+                ghostConnectionFrom = null;
+                ghostConnectionTo = null;
+            }
         }
 
         public void OnDestroy()
@@ -36,10 +64,8 @@ namespace SingleUseDockingPorts
         {
             if (data.from == part)
             {
-                //create a new joint between to the two port's parents supplement the existing one?
-                part.parent.gameObject.AddComponent<FixedJoint>();
-                FixedJoint joint = part.parent.gameObject.GetComponent<FixedJoint>();
-                joint.connectedBody = data.to.parent.gameObject.rigidbody;
+                ghostConnectionFrom = part.parent;
+                ghostConnectionTo = data.to.parent;
             }
         }
     }
