@@ -24,10 +24,23 @@ namespace SingleUseDockingPorts
             base.OnStart(st);
             foreach (Part child in part.children)
             {
-                if (child.Modules.Contains(this.ClassID))
+                print("hunting for children");
+                //look through all the modules on the part
+                foreach (PartModule module in child.Modules)
                 {
-                    ghostConnectionFrom = part.parent;
-                    ghostConnectionTo = child.children[0];
+                    //if the module is a single use port
+                    if (module is ModuleSingleUseDockingPort)
+                    {
+                        //cast the module to the proper type
+                        ModuleSingleUseDockingPort singlePort = module as ModuleSingleUseDockingPort;
+                        //if we have the same node type
+                        if (singlePort.nodeType.Equals(this.nodeType))
+                        {
+                            //set the needed connection parts
+                            ghostConnectionFrom = part.parent;
+                            ghostConnectionTo = child.children[0];
+                        }
+                    }
                 }
             }
         }
