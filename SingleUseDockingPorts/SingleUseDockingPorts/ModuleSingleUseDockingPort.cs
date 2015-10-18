@@ -21,7 +21,7 @@ namespace SingleUseDockingPorts
             base.OnAwake();
         }
 
-        [KSPEvent(guiName = "Clamp", externalToEVAOnly = true)]
+        [KSPEvent(guiName = "Clamp", guiActiveUnfocused = true, externalToEVAOnly = true, guiActive = false, unfocusedRange = 4)]
         public void clamp()
         {
             if (this.isDockedToPort() != null)
