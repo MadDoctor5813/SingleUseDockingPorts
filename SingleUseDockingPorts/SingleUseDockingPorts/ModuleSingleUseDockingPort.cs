@@ -20,13 +20,17 @@ namespace SingleUseDockingPorts
         {
             if (!clamped)
             {
-                if (getDockedPort() != null)
+                Part dockedPort = getDockedPort();
+                if (dockedPort != null)
                 {
+                    ModuleClampableDockingPort clampableModule = getDockedPort().Modules.GetModules<ModuleClampableDockingPort>()[0];
                     //create the joint between the two parts on the non-docking end of both ports   
                     FixedJoint joint = part.findAttachNode("bottom").attachedPart.gameObject.AddComponent<FixedJoint>();
-                    joint.connectedBody = getDockedPort().findAttachNode("bottom").attachedPart.rigidbody;
+                    joint.connectedBody = dockedPort.findAttachNode("bottom").attachedPart.rigidbody;
                     clamped = true;
-                    getDockedPort().Modules.GetModules<ModuleClampableDockingPort>()[0].clamped = true;
+                    clampableModule.clamped = true;
+                    this.disableEventsAfterClamp();
+                    clampableModule.disableEventsAfterClamp();
                     ScreenMessages.PostScreenMessage("Port clamped.", 2f, ScreenMessageStyle.UPPER_CENTER);
                 }
             }
@@ -35,6 +39,14 @@ namespace SingleUseDockingPorts
                 ScreenMessages.PostScreenMessage("Already clamped. You should never see this.", 2f, ScreenMessageStyle.UPPER_CENTER);
             }
 
+        }
+
+        public void disableEventsAfterClamp()
+        {
+            Events["clamp"].active = false;
+            Events["Decouple"].active = false;
+            Events["undock"].active = false;
+            Events["undocksamevessel"].active = false;
         }
 
         private Part getDockedPort()
