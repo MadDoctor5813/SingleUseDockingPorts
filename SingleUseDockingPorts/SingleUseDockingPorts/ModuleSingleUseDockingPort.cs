@@ -8,7 +8,7 @@ namespace SingleUseDockingPorts
 {
     public class ModuleClampableDockingPort : ModuleDockingNode
     {
-        bool clamped = false;
+        public bool clamped = false;
 
         public override void OnAwake()
         {
@@ -18,13 +18,21 @@ namespace SingleUseDockingPorts
         [KSPEvent(guiName = "Clamp", guiActiveUnfocused = true, externalToEVAOnly = true, guiActive = false, unfocusedRange = 4)]
         public void clamp()
         {
-            if (getDockedPort() != null)
+            if (!clamped)
             {
-                //create the joint between the two parts on the non-docking end of both ports   
-                FixedJoint joint = part.findAttachNode("bottom").attachedPart.gameObject.AddComponent<FixedJoint>();
-                joint.connectedBody = getDockedPort().findAttachNode("bottom").attachedPart.rigidbody;
-                clamped = true;
-                ScreenMessages.PostScreenMessage("Port clamped.", 2f, ScreenMessageStyle.UPPER_CENTER);
+                if (getDockedPort() != null)
+                {
+                    //create the joint between the two parts on the non-docking end of both ports   
+                    FixedJoint joint = part.findAttachNode("bottom").attachedPart.gameObject.AddComponent<FixedJoint>();
+                    joint.connectedBody = getDockedPort().findAttachNode("bottom").attachedPart.rigidbody;
+                    clamped = true;
+                    getDockedPort().Modules.GetModules<ModuleClampableDockingPort>()[0].clamped = true;
+                    ScreenMessages.PostScreenMessage("Port clamped.", 2f, ScreenMessageStyle.UPPER_CENTER);
+                }
+            }
+            else
+            {
+                ScreenMessages.PostScreenMessage("Already clamped. You should never see this.", 2f, ScreenMessageStyle.UPPER_CENTER);
             }
 
         }
