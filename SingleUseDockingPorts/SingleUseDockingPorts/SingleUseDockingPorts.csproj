@@ -58,7 +58,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy "$(TargetPath)" "$(SolutionDir)..\GameData\SingleUseDockingPorts\SingleUseDockingPorts.reloadable" /y
-xcopy "$(SolutionDir)..\GameData\SingleUseDockingPorts\*" "C:\Users\Kevin\Games\KSP 1.0\GameData\SingleUseDockingPorts\" /s/h/e/k/f/c/y
+xcopy "$(SolutionDir)..\GameData\SingleUseDockingPorts\*" "C:\Users\Kevin\Games\KSP 1.0 - Dev\GameData\SingleUseDockingPorts\" /s/h/e/k/f/c/y
 </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
