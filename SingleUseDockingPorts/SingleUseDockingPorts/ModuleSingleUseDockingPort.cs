@@ -10,12 +10,6 @@ namespace SingleUseDockingPorts
     {
         bool clamped = false;
 
-
-        Part ghostConnectionFrom = null;
-        Part ghostConnectionTo = null;
-
-        FixedJoint clampJoint;
-
         public override void OnAwake()
         {
             base.OnAwake();
@@ -24,48 +18,28 @@ namespace SingleUseDockingPorts
         [KSPEvent(guiName = "Clamp", guiActiveUnfocused = true, externalToEVAOnly = true, guiActive = false, unfocusedRange = 4)]
         public void clamp()
         {
-            if (this.isDockedToPort() != null)
+            if (getDockedPort() != null)
             {
-                print("This port is docked to " + this.isDockedToPort().name);
+                //create the joint between the two parts on the non-docking end of both ports   
+                FixedJoint joint = part.findAttachNode("bottom").attachedPart.gameObject.AddComponent<FixedJoint>();
+                joint.connectedBody = getDockedPort().findAttachNode("bottom").attachedPart.rigidbody;
+                clamped = true;
+                ScreenMessages.PostScreenMessage("Port clamped.", 2f, ScreenMessageStyle.UPPER_CENTER);
             }
-            if (this.isCoupledToPort() != null)
-            {
-                print("This port is coupled to " + this.isCoupledToPort().name);
-            }
+
         }
 
-        public override void OnFixedUpdate()
+        private Part getDockedPort()
         {
-            base.OnFixedUpdate();
-            if (ghostConnectionFrom != null && ghostConnectionTo != null)
+            Part dockedPart = part.findAttachNode("top").attachedPart;
+            foreach (PartModule module in dockedPart.Modules)
             {
-                print("Making connection between " + ghostConnectionFrom.name + " and " + ghostConnectionTo.name);
-                clampJoint = ghostConnectionFrom.gameObject.AddComponent<FixedJoint>();
-                clampJoint.connectedBody = ghostConnectionTo.gameObject.rigidbody;
-                ghostConnectionFrom = null;
-                ghostConnectionTo = null;
-            }
-        }
-
-        //checks if this port is coupled to a port, i.e, it's had a port attached in the VAB. Returns the docked part or null if there isn't one.
-        private Part isCoupledToPort()
-        {
-            List<ModuleClampableDockingPort> ports = this.vessel.FindPartModulesImplementing<ModuleClampableDockingPort>();
-            foreach (ModuleClampableDockingPort port in ports)
-            {
-                //if we are this part's parent, or vice versa
-                if (this.part.parent == port.part || port.part.parent == this.part)
+                if ((module as ModuleClampableDockingPort).nodeType == this.nodeType)
                 {
-                    return port.part;
+                    return dockedPart;
                 }
             }
             return null;
-        }
-
-        //checks if this port has been docked to a port in the usual way. Returns the docked part or null if there isn't one.
-        private Part isDockedToPort()
-        {
-            return vessel[dockedPartUId];
         }
 
         public new void Undock()
