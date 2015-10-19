@@ -29,7 +29,7 @@ namespace SingleUseDockingPorts
                     joint.connectedBody = dockedPort.findAttachNode("bottom").attachedPart.rigidbody;
                     clamped = true;
                     clampableModule.clamped = true;
-                    this.disableEventsAfterClamp();
+                    disableEventsAfterClamp();
                     clampableModule.disableEventsAfterClamp();
                     ScreenMessages.PostScreenMessage("Port clamped.", 2f, ScreenMessageStyle.UPPER_CENTER);
                 }
@@ -43,10 +43,10 @@ namespace SingleUseDockingPorts
 
         public void disableEventsAfterClamp()
         {
-            Events["clamp"].active = false;
             Events["Decouple"].active = false;
-            Events["undock"].active = false;
-            Events["undocksamevessel"].active = false;
+            Events["clamp"].active = false;
+            Events["Undock"].active = false;
+            Events["UndockSameVessel"].active = false;
         }
 
         private Part getDockedPort()
